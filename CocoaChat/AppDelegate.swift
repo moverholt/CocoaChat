@@ -9,12 +9,10 @@ import Cocoa
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-    @IBOutlet var window: NSWindow!
-
+    private var preferencesWindowController: PreferencesWindowController?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
+        ChatWindowManager.shared.openNewEmptyFullChatWindow()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
@@ -25,6 +23,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 
-
+    @IBAction func onClickFileNew(_ sender: Any) {
+        ChatWindowManager.shared.openNewEmptyFullChatWindow()
+    }
+    
+    @IBAction func onClickPreferences(_ sender: Any) {
+        if preferencesWindowController == nil {
+            preferencesWindowController = PreferencesWindowController()
+        }
+        preferencesWindowController?.showWindow(nil)
+    }
 }
 

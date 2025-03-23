@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23094" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23094"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PreferencesWindowController" customModule="CocoaChat" customModuleProvider="target">
+            <connections>
+                <outlet property="openAIAPIKeyTextField" destination="ZNx-Dl-ePl" id="pWd-bp-nbe"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1512" height="944"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DSi-AL-iEV">
+                        <rect key="frame" x="10" y="242" width="99" height="16"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="OpenAI API Key" id="htL-Xt-0fq">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ZNx-Dl-ePl">
+                        <rect key="frame" x="119" y="240" width="280" height="21"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="280" id="1od-sY-vaP"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="Kha-oB-ksD">
+                            <font key="font" usesAppearanceFont="YES"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="DSi-AL-iEV" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="12" id="2ka-vs-QbS"/>
+                    <constraint firstItem="ZNx-Dl-ePl" firstAttribute="leading" secondItem="DSi-AL-iEV" secondAttribute="trailing" constant="12" id="PpG-4W-Tb7"/>
+                    <constraint firstItem="DSi-AL-iEV" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="12" id="USj-su-7pj"/>
+                    <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ZNx-Dl-ePl" secondAttribute="trailing" constant="12" id="tXc-Gs-IyG"/>
+                    <constraint firstItem="ZNx-Dl-ePl" firstAttribute="centerY" secondItem="DSi-AL-iEV" secondAttribute="centerY" id="znr-LQ-gXh"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="-214" y="125"/>
+        </window>
+    </objects>
+</document>

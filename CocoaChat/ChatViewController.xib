@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23094" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23094"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ChatViewController" customModule="CocoaChat" customModuleProvider="target">
+            <connections>
+                <outlet property="docView" destination="gyO-lF-vzt" id="OtG-hx-UHh"/>
+                <outlet property="newMsgTextView" destination="qwd-iC-xm8" id="6Es-x2-ijP"/>
+                <outlet property="scrollView" destination="e0D-An-cqI" id="bFd-Oq-kop"/>
+                <outlet property="sendBtn" destination="UPN-jE-4Ki" id="AV0-17-gk2"/>
+                <outlet property="spacer" destination="zki-pE-l6g" id="ZYl-FB-EUo"/>
+                <outlet property="spacerHeight" destination="44w-75-psS" id="J60-QK-r6n"/>
+                <outlet property="spinner" destination="Ro9-wq-aMP" id="eg4-Ph-f5B"/>
+                <outlet property="stackView" destination="Uss-jv-HV8" id="W6p-m9-2RB"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="465" height="272"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="e0D-An-cqI">
+                    <rect key="frame" x="12" y="98" width="441" height="162"/>
+                    <clipView key="contentView" drawsBackground="NO" id="cHK-d2-9q4" customClass="FlippedClipView" customModule="CocoaChat" customModuleProvider="target">
+                        <rect key="frame" x="1" y="1" width="439" height="160"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view id="gyO-lF-vzt">
+                                <rect key="frame" x="0.0" y="0.0" width="424" height="145"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uss-jv-HV8">
+                                        <rect key="frame" x="0.0" y="0.0" width="424" height="145"/>
+                                    </stackView>
+                                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="zki-pE-l6g" userLabel="Spacer">
+                                        <rect key="frame" x="0.0" y="0.0" width="424" height="0.0"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" id="44w-75-psS"/>
+                                        </constraints>
+                                    </customView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="Uss-jv-HV8" firstAttribute="top" secondItem="gyO-lF-vzt" secondAttribute="top" id="2sB-Si-eGm"/>
+                                    <constraint firstAttribute="trailing" secondItem="zki-pE-l6g" secondAttribute="trailing" id="Co9-ca-JCQ"/>
+                                    <constraint firstItem="zki-pE-l6g" firstAttribute="top" secondItem="Uss-jv-HV8" secondAttribute="bottom" id="MSL-a4-zev"/>
+                                    <constraint firstItem="Uss-jv-HV8" firstAttribute="leading" secondItem="gyO-lF-vzt" secondAttribute="leading" id="QR0-Sb-MyE"/>
+                                    <constraint firstItem="zki-pE-l6g" firstAttribute="leading" secondItem="gyO-lF-vzt" secondAttribute="leading" id="ZMw-uW-fvk"/>
+                                    <constraint firstAttribute="bottom" secondItem="zki-pE-l6g" secondAttribute="bottom" id="kA9-Bt-2jv"/>
+                                    <constraint firstAttribute="trailing" secondItem="Uss-jv-HV8" secondAttribute="trailing" id="y9A-YT-CPI"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                    </clipView>
+                    <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="pVz-sF-z5G">
+                        <rect key="frame" x="-100" y="-100" width="454" height="16"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="xIs-tN-kzE">
+                        <rect key="frame" x="424" y="1" width="16" height="154"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                </scrollView>
+                <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nxl-F2-Sl4">
+                    <rect key="frame" x="12" y="38" width="441" height="48"/>
+                    <clipView key="contentView" drawsBackground="NO" id="GCO-KH-dQL">
+                        <rect key="frame" x="0.0" y="0.0" width="441" height="48"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" allowsUndo="YES" spellingCorrection="YES" smartInsertDelete="YES" id="qwd-iC-xm8" customClass="NewChatMsgTextView" customModule="CocoaChat" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="441" height="48"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <size key="minSize" width="441" height="48"/>
+                                <size key="maxSize" width="441" height="10000000"/>
+                            </textView>
+                        </subviews>
+                    </clipView>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="48" id="XBh-tt-8ee"/>
+                    </constraints>
+                    <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="zc8-N1-GNB">
+                        <rect key="frame" x="-100" y="-100" width="240" height="16"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="EgN-hc-va0">
+                        <rect key="frame" x="425" y="0.0" width="16" height="48"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                </scrollView>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UPN-jE-4Ki">
+                    <rect key="frame" x="395" y="5" width="65" height="32"/>
+                    <buttonCell key="cell" type="push" title="Send" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="R3D-Gi-tWI">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onSendMsg:" target="-2" id="OYa-4V-UKx"/>
+                    </connections>
+                </button>
+                <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Ro9-wq-aMP">
+                    <rect key="frame" x="378" y="14" width="16" height="16"/>
+                </progressIndicator>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="nxl-F2-Sl4" secondAttribute="trailing" constant="12" id="4Eb-d3-czI"/>
+                <constraint firstAttribute="trailing" secondItem="UPN-jE-4Ki" secondAttribute="trailing" constant="12" id="4ko-6x-UpZ"/>
+                <constraint firstItem="e0D-An-cqI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="12" id="83f-UU-1ZG"/>
+                <constraint firstAttribute="bottom" secondItem="UPN-jE-4Ki" secondAttribute="bottom" constant="12" id="FKf-sV-oXy"/>
+                <constraint firstItem="UPN-jE-4Ki" firstAttribute="leading" secondItem="Ro9-wq-aMP" secondAttribute="trailing" constant="8" symbolic="YES" id="JRJ-Vx-yDe"/>
+                <constraint firstItem="e0D-An-cqI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="12" id="LWx-95-d6k"/>
+                <constraint firstItem="UPN-jE-4Ki" firstAttribute="top" secondItem="nxl-F2-Sl4" secondAttribute="bottom" constant="6" id="aUv-NO-KYg"/>
+                <constraint firstItem="nxl-F2-Sl4" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="12" id="bW8-vL-BDC"/>
+                <constraint firstItem="nxl-F2-Sl4" firstAttribute="top" secondItem="e0D-An-cqI" secondAttribute="bottom" constant="12" id="ciI-yb-1qL"/>
+                <constraint firstItem="Ro9-wq-aMP" firstAttribute="centerY" secondItem="UPN-jE-4Ki" secondAttribute="centerY" id="iLw-Vl-9kt"/>
+                <constraint firstAttribute="trailing" secondItem="e0D-An-cqI" secondAttribute="trailing" constant="12" id="pv0-eR-ZVy"/>
+            </constraints>
+            <point key="canvasLocation" x="54.5" y="-36"/>
+        </customView>
+    </objects>
+</document>
