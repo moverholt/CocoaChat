@@ -12,10 +12,6 @@ class FloatingChatPanel: NSPanel {
         self.windowController as! FloatingChatWindowController
     }
     
-    private var thread: Thread {
-        floatingChatWindowController.thread
-    }
-
     @IBAction func openAsFullChatWindow(_ sender: Any) {
         print("Open as full chat window")
         ChatWindowManager.shared.moveToFullChatWindow(floatingChatWindowController)

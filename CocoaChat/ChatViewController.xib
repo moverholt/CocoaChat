@@ -24,21 +24,21 @@
             <rect key="frame" x="0.0" y="0.0" width="465" height="272"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="e0D-An-cqI">
+                <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="e0D-An-cqI">
                     <rect key="frame" x="12" y="98" width="441" height="162"/>
                     <clipView key="contentView" drawsBackground="NO" id="cHK-d2-9q4" customClass="FlippedClipView" customModule="CocoaChat" customModuleProvider="target">
-                        <rect key="frame" x="1" y="1" width="439" height="160"/>
+                        <rect key="frame" x="0.0" y="0.0" width="441" height="162"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view id="gyO-lF-vzt">
-                                <rect key="frame" x="0.0" y="0.0" width="424" height="145"/>
+                                <rect key="frame" x="0.0" y="0.0" width="426" height="147"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uss-jv-HV8">
-                                        <rect key="frame" x="0.0" y="0.0" width="424" height="145"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="426" height="147"/>
                                     </stackView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="zki-pE-l6g" userLabel="Spacer">
-                                        <rect key="frame" x="0.0" y="0.0" width="424" height="0.0"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="426" height="0.0"/>
                                         <constraints>
                                             <constraint firstAttribute="height" id="44w-75-psS"/>
                                         </constraints>

@@ -7,15 +7,15 @@
 
 import Cocoa
 
-
 class ChatViewController:
     NSViewController,
     NSWindowDelegate,
     NewChatMsgTextViewDelegate,
     NSTextViewDelegate,
     OpenAIStreamingDelegate {
-    private let thread: Thread!
     private let streaming: OpenAIStreaming!
+    private let initalThreadState: ThreadState?
+    private(set) var streamingMsgView: MessageView?
 
     @IBOutlet weak var newMsgTextView: NewChatMsgTextView!
     @IBOutlet weak var scrollView: NSScrollView!
@@ -29,9 +29,9 @@ class ChatViewController:
     @IBOutlet weak var spacer: NSView!
     @IBOutlet weak var spacerHeight: NSLayoutConstraint!
     
-    init(thread: Thread, streaming: OpenAIStreaming) {
-        self.thread = thread
+    init(thread: ThreadState?, streaming: OpenAIStreaming) {
         self.streaming = streaming
+        self.initalThreadState = thread
         super.init(
             nibName: NSNib.Name("ChatViewController"),
             bundle: nil
@@ -44,35 +44,33 @@ class ChatViewController:
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.streaming.delegate = self
-        setupConstraints()
-    }
-    
-    override func viewDidAppear() {
-        print("View did appear")
         
         self.view.window?.delegate = self
         self.newMsgTextView.msgDelegate = self
         self.newMsgTextView.delegate = self
         self.newMsgTextView.string = ""
         self.sendBtn.isEnabled = false
-        
+        self.streaming.delegate = self
         spacer.translatesAutoresizingMaskIntoConstraints = false
-        syncThreadMsgsToStackView()
+        syncThreadMsgsToStackView(initalThreadState)
+        setupConstraints()
+    }
+    
+    override func viewDidAppear() {
+        print("View did appear")
     }
     
     override func viewDidLayout() {
-        print("View did layout")
         super.viewDidLayout()
         updateSpacerHeight()
     }
     
-    var lastUserMsgView: MessageTextView? {
-        msgTextViews.filter({ $0.msg.sender == .user }).last
+    var lastUserMsgView: MessageView? {
+        stackMsgViews.filter({ $0.role == .user }).last
     }
     
-    var lastAssistantView: MessageTextView? {
-        msgTextViews.filter({ $0.msg.sender == .assistant }).last
+    var lastAssistantView: MessageView? {
+        stackMsgViews.filter({ $0.role == .assistant }).last
     }
     
     func updateSpacerHeight() {
@@ -82,7 +80,7 @@ class ChatViewController:
         
         var const = ch - (lum?.bounds.height ?? 0)
         if let lam = lam {
-            if msgTextViews.firstIndex(of: lam) == msgTextViews.count - 1 {
+            if stackMsgViews.firstIndex(of: lam) == stackMsgViews.count - 1 {
                 const -= lam.bounds.height
             }
         }
@@ -90,21 +88,20 @@ class ChatViewController:
     }
     
     func scrollToLastUserMsg() {
-        guard let lum = msgTextViews.last else {
-            return
-        }
+        guard let lum = stackMsgViews.last else { return }
         let coords = lum.convert(lum.bounds, to: stackView)
         let offset = stackView.bounds.maxY - coords.maxY
         scrollToOffset(offset)
     }
     
-    func syncThreadMsgsToStackView() {
-        if msgTextViews.count == thread.messages.count { return }
-        let newMsgs = thread.messages.dropFirst(msgTextViews.count)
-        newMsgs.forEach { msg in
-            let tv = MessageTextView(msg: msg)
-            tv.string = msg.text
+    private func syncThreadMsgsToStackView(_ thread: ThreadState?) {
+        guard let thread = thread else { return }
+        thread.messages.forEach { msg in
+            let tv = MessageView(text: msg.text, role: msg.sender)
             stackView.addArrangedSubview(tv)
+        }
+        if let sm = thread.streamingMsg {
+            streamingMsgView = addAssistantMsgViewToStackView(sm.text)
         }
     }
     
@@ -117,12 +114,6 @@ class ChatViewController:
             docView.leadingAnchor.constraint(equalTo: clipView.leadingAnchor),
             docView.trailingAnchor.constraint(equalTo: clipView.trailingAnchor),
         ])
-    }
-    
-    var msgTextViews: [MessageTextView] {
-        stackView.arrangedSubviews.compactMap { v in
-            v as? MessageTextView
-        }
     }
     
     func windowDidResize(_ notification: Notification) {
@@ -139,12 +130,11 @@ class ChatViewController:
         if text.isEmpty {
             return
         }
-        thread.addUserMessage(text)
-        streaming.streamThread(thread, model: "gpt-4o")
         newMsgTextView.string = ""
         sendBtn.title = "Stop"
         spinner.startAnimation(nil)
-        syncThreadMsgsToStackView()
+        addUserMsgViewToStackView(text)
+        streaming.streamThread(threadState, model: "gpt-4o")
         scrollToLastUserMsg()
         updateSpacerHeight()
     }
@@ -176,25 +166,21 @@ class ChatViewController:
         Task { @MainActor in
             spinner.stopAnimation(nil)
             sendBtn.title = "Send"
-            thread.endStreamingMsg(text)
+            streamingMsgView = nil
             updateSpacerHeight()
         }
     }
     
-    private var stackMsgTextViews: [MessageTextView] {
-        stackView.arrangedSubviews.compactMap { v in
-            v as? MessageTextView
-        }
+    var stackMsgViews: [MessageView] {
+        stackView.arrangedSubviews.compactMap { v in v as? MessageView }
     }
     
     func streamUpdate(_ body: String) {
         Task { @MainActor in
-            if thread.streaming {
-                thread.updateStreamingMsg(body)
-                stackMsgTextViews.last?.string = body
+            if let smv = streamingMsgView {
+                smv.setText(body)
             } else {
-                thread.startStreamingMsg(body)
-                syncThreadMsgsToStackView()
+                streamingMsgView = addAssistantMsgViewToStackView(body)
             }
             updateSpacerHeight()
         }
@@ -202,9 +188,9 @@ class ChatViewController:
     
     private func cancelStreaming() {
         streaming.stopListening()
-        thread.endStreamingMsg("")
         spinner.stopAnimation(nil)
         sendBtn.title = "Send"
+        streamingMsgView = nil
     }
         
     
@@ -214,5 +200,20 @@ class ChatViewController:
         } else {
             handleSubmit()
         }
+    }
+    
+    private func addUserMsgViewToStackView(_ text: String) {
+        let mv = MessageView(text: text, role: .user)
+        stackView.addArrangedSubview(mv)
+    }
+    
+    private func addAssistantMsgViewToStackView(_ text: String) -> MessageView {
+        let mv = MessageView(text: text, role: .assistant)
+        stackView.addArrangedSubview(mv)
+        return mv
+    }
+    
+    var threadState: ThreadState {
+        return ThreadState(self)
     }
 }

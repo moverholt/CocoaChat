@@ -8,12 +8,12 @@
 import Cocoa
 
 class ChatWindowController: NSWindowController {
-    let thread: Thread!
     let streaming: OpenAIStreaming!
+    private var initalThreadState: ThreadState?
     
-    init(_ thread: Thread, _ streaming: OpenAIStreaming) {
-        self.thread = thread
+    init(_ thread: ThreadState?, _ streaming: OpenAIStreaming) {
         self.streaming = streaming
+        self.initalThreadState = thread
         super.init(window: nil)
     }
     
@@ -23,10 +23,17 @@ class ChatWindowController: NSWindowController {
 
     override func windowDidLoad() {
         super.windowDidLoad()
-        contentViewController = ChatViewController(thread: thread, streaming: streaming)
+        contentViewController = ChatViewController(
+            thread: initalThreadState,
+            streaming: streaming
+        )
     }
     
     var chatViewController: ChatViewController {
         contentViewController as! ChatViewController
+    }
+    
+    var threadState: ThreadState {
+        chatViewController.threadState
     }
 }

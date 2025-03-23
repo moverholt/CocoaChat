@@ -13,7 +13,6 @@ class FlippedClipView: NSClipView {
     }
 }
 
-
 func intrinsicSize(of textView: NSTextView, forWidth width: CGFloat) -> NSSize {
     textView.textContainer?.containerSize = NSSize(
         width: width,

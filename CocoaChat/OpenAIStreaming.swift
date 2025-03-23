@@ -32,7 +32,7 @@ class OpenAIStreaming: NSObject, URLSessionDataDelegate {
         )
     }
     
-    func streamThread(_ thread: Thread, model: OpenAI.Model.ID) {
+    func streamThread(_ thread: ThreadState, model: OpenAI.Model.ID) {
         streamChatCompletion(
             thread.messages.map({
                 Message(

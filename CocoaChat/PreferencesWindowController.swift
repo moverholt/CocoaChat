@@ -7,14 +7,15 @@
 
 import Cocoa
 
-class PreferencesWindowController: NSWindowController, NSTextFieldDelegate {
+class PreferencesWindowController:
+    NSWindowController,
+    NSTextFieldDelegate {
     let settings = UserSettings.shared
 
     @IBOutlet weak var openAIAPIKeyTextField: NSTextField!
     
     override func windowDidLoad() {
         super.windowDidLoad()
-        
         openAIAPIKeyTextField.stringValue = settings.model.apiKey ?? ""
         openAIAPIKeyTextField.delegate = self
     }
