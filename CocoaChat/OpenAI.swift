@@ -10,7 +10,7 @@ import Cocoa
 class OpenAI {
     static let shared = OpenAI()
     
-    private var models: [Model]?
+    private(set) var models: [Model]?
     private let endpoint = "https://api.openai.com"
     
     enum ClientError: Error {
@@ -33,6 +33,16 @@ class OpenAI {
         return URL(string: "\(endpoint)\(path)")!
     }
     
+    private var useableModekIds: [String] {
+        [
+            "gpt-4",
+            "gpt-4o",
+            "gpt-4.5-preview",
+            "o1",
+            "o3-mini"
+        ]
+    }
+    
     func models() async -> Result<[Model], Error> {
         if let models = self.models {
             return .success(models)
@@ -44,7 +54,9 @@ class OpenAI {
             if let resp = try? JSONDecoder().decode(
                 ModelsResponse.self, from: data
             ) {
-                let models = resp.data.sorted(by: { $0.id < $1.id })
+                let models = resp.data.sorted(by: { $0.id < $1.id }).filter({
+                    useableModekIds.contains($0.id)
+                })
                 self.models = models
                 print("Models found: \(models.count)")
                 return .success(models)

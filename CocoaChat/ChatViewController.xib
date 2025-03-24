@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ChatViewController" customModule="CocoaChat" customModuleProvider="target">
             <connections>
                 <outlet property="docView" destination="gyO-lF-vzt" id="OtG-hx-UHh"/>
+                <outlet property="modelsPopUpBtn" destination="7Za-FA-Uge" id="u6A-FE-bhp"/>
                 <outlet property="newMsgTextView" destination="qwd-iC-xm8" id="6Es-x2-ijP"/>
                 <outlet property="scrollView" destination="e0D-An-cqI" id="bFd-Oq-kop"/>
                 <outlet property="sendBtn" destination="UPN-jE-4Ki" id="AV0-17-gk2"/>
@@ -25,16 +26,16 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="e0D-An-cqI">
-                    <rect key="frame" x="12" y="98" width="441" height="162"/>
+                    <rect key="frame" x="12" y="98" width="441" height="174"/>
                     <clipView key="contentView" drawsBackground="NO" id="cHK-d2-9q4" customClass="FlippedClipView" customModule="CocoaChat" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="441" height="162"/>
+                        <rect key="frame" x="0.0" y="0.0" width="441" height="174"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view id="gyO-lF-vzt">
-                                <rect key="frame" x="0.0" y="0.0" width="426" height="147"/>
+                                <rect key="frame" x="0.0" y="0.0" width="426" height="159"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
-                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uss-jv-HV8">
+                                    <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="12" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uss-jv-HV8">
                                         <rect key="frame" x="0.0" y="0.0" width="426" height="147"/>
                                     </stackView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="zki-pE-l6g" userLabel="Spacer">
@@ -106,6 +107,17 @@
                 <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Ro9-wq-aMP">
                     <rect key="frame" x="378" y="14" width="16" height="16"/>
                 </progressIndicator>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Za-FA-Uge">
+                    <rect key="frame" x="9" y="8" width="39" height="25"/>
+                    <popUpButtonCell key="cell" type="push" alternateTitle="Models" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="onI-If-IPk">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="0yb-E7-59h"/>
+                    </popUpButtonCell>
+                    <connections>
+                        <action selector="onSelectModelsPopUp:" target="-2" id="Kya-ke-aNS"/>
+                    </connections>
+                </popUpButton>
             </subviews>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="nxl-F2-Sl4" secondAttribute="trailing" constant="12" id="4Eb-d3-czI"/>
@@ -113,12 +125,14 @@
                 <constraint firstItem="e0D-An-cqI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="12" id="83f-UU-1ZG"/>
                 <constraint firstAttribute="bottom" secondItem="UPN-jE-4Ki" secondAttribute="bottom" constant="12" id="FKf-sV-oXy"/>
                 <constraint firstItem="UPN-jE-4Ki" firstAttribute="leading" secondItem="Ro9-wq-aMP" secondAttribute="trailing" constant="8" symbolic="YES" id="JRJ-Vx-yDe"/>
-                <constraint firstItem="e0D-An-cqI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="12" id="LWx-95-d6k"/>
+                <constraint firstItem="e0D-An-cqI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="LWx-95-d6k"/>
                 <constraint firstItem="UPN-jE-4Ki" firstAttribute="top" secondItem="nxl-F2-Sl4" secondAttribute="bottom" constant="6" id="aUv-NO-KYg"/>
                 <constraint firstItem="nxl-F2-Sl4" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="12" id="bW8-vL-BDC"/>
                 <constraint firstItem="nxl-F2-Sl4" firstAttribute="top" secondItem="e0D-An-cqI" secondAttribute="bottom" constant="12" id="ciI-yb-1qL"/>
                 <constraint firstItem="Ro9-wq-aMP" firstAttribute="centerY" secondItem="UPN-jE-4Ki" secondAttribute="centerY" id="iLw-Vl-9kt"/>
                 <constraint firstAttribute="trailing" secondItem="e0D-An-cqI" secondAttribute="trailing" constant="12" id="pv0-eR-ZVy"/>
+                <constraint firstItem="7Za-FA-Uge" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="12" id="sWJ-gE-g8a"/>
+                <constraint firstItem="7Za-FA-Uge" firstAttribute="top" secondItem="nxl-F2-Sl4" secondAttribute="bottom" constant="6" id="wf5-2t-Sry"/>
             </constraints>
             <point key="canvasLocation" x="54.5" y="-36"/>
         </customView>

@@ -7,10 +7,10 @@
 
 import Foundation
 
-struct ThreadState: Equatable, Identifiable {
-    let id = UUID()
-    private(set) var messages: [Message] = []
-    private(set) var streamingMsg: Message?
+struct ThreadState {
+    let messages: [Message]
+    let streamingMsg: Message?
+    let modelId: String
     
     enum Role {
         case user, assistant
@@ -28,10 +28,9 @@ struct ThreadState: Equatable, Identifiable {
         }
         if let smv = chatController.streamingMsgView {
             streamingMsg = Message(sender: smv.role, text: smv.text)
+        } else {
+            streamingMsg = nil
         }
-    }
-    
-    static func == (lhs: ThreadState, rhs: ThreadState) -> Bool {
-        lhs.id == rhs.id
+        modelId = chatController.modelId
     }
 }

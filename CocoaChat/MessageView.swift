@@ -57,6 +57,13 @@ class MessageView: NSView {
         textView.translatesAutoresizingMaskIntoConstraints = false
         textView.isEditable = false
         textView.string = text
+        self.wantsLayer = true
+        self.layer?.cornerRadius = 18
+        if role == .assistant {
+            self.layer?.backgroundColor = NSColor.darkGray.cgColor
+        } else {
+            self.layer?.backgroundColor = NSColor.systemBlue.cgColor
+        }
         addSubview(textView)
         NSLayoutConstraint.activate([
             textView.topAnchor.constraint(equalTo: topAnchor, constant: verticalPadding),

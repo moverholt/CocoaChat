@@ -24,7 +24,9 @@ class ChatWindowManager {
         cont.close()
         windows.removeAll { $0 === cont }
         floatingWindow?.close()
-        floatingWindow = FloatingChatWindowController(cont.threadState, cont.streaming)
+        floatingWindow = FloatingChatWindowController(
+            cont.threadState, cont.streaming
+        )
         floatingWindow?.showWindow(nil)
     }
 
@@ -35,5 +37,11 @@ class ChatWindowManager {
     
     func openNewEmptyFullChatWindow() {
         openNewFullChatWindow(nil, OpenAIStreaming())
+    }
+    
+    func openEmptyFloatingChatWindow() {
+        floatingWindow?.close()
+        floatingWindow = FloatingChatWindowController(nil, OpenAIStreaming())
+        floatingWindow?.showWindow(nil)
     }
 }

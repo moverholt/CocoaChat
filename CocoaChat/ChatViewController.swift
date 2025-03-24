@@ -28,6 +28,12 @@ class ChatViewController:
     @IBOutlet weak var spinner: NSProgressIndicator!
     @IBOutlet weak var spacer: NSView!
     @IBOutlet weak var spacerHeight: NSLayoutConstraint!
+    @IBOutlet weak var modelsPopUpBtn: NSPopUpButton!
+    @IBAction func onSelectModelsPopUp(_ sender: Any) {
+        let modelId = modelsPopUpBtn.title
+        print("Selected model: \(modelId)")
+        UserSettings.shared.setDefaultModelId(modelId)
+    }
     
     init(thread: ThreadState?, streaming: OpenAIStreaming) {
         self.streaming = streaming
@@ -52,8 +58,14 @@ class ChatViewController:
         self.sendBtn.isEnabled = false
         self.streaming.delegate = self
         spacer.translatesAutoresizingMaskIntoConstraints = false
-        syncThreadMsgsToStackView(initalThreadState)
         setupConstraints()
+        setupModelOptions()
+        if let thread = initalThreadState {
+            setupControllerWithThreadState(thread)
+        } else {
+            let userModel = UserSettings.shared.model.defaultModelId
+            modelsPopUpBtn.selectItem(withTitle: userModel)
+        }
     }
     
     override func viewDidAppear() {
@@ -94,7 +106,7 @@ class ChatViewController:
         scrollToOffset(offset)
     }
     
-    private func syncThreadMsgsToStackView(_ thread: ThreadState?) {
+    private func setupControllerWithThreadState(_ thread: ThreadState?) {
         guard let thread = thread else { return }
         thread.messages.forEach { msg in
             let tv = MessageView(text: msg.text, role: msg.sender)
@@ -103,6 +115,7 @@ class ChatViewController:
         if let sm = thread.streamingMsg {
             streamingMsgView = addAssistantMsgViewToStackView(sm.text)
         }
+        modelsPopUpBtn.selectItem(withTitle: thread.modelId)
     }
     
     private func setupConstraints() {
@@ -134,10 +147,13 @@ class ChatViewController:
         sendBtn.title = "Stop"
         spinner.startAnimation(nil)
         addUserMsgViewToStackView(text)
-        streaming.streamThread(threadState, model: "gpt-4o")
+        print("Selected model: \(modelId)")
+        streaming.streamThread(threadState, model: modelId)
         scrollToLastUserMsg()
         updateSpacerHeight()
     }
+    
+    var modelId: String { modelsPopUpBtn.title }
     
     func textDidChange(_ notification: Notification) {
         guard let textView = notification.object as? NSTextView else {
@@ -215,5 +231,13 @@ class ChatViewController:
     
     var threadState: ThreadState {
         return ThreadState(self)
+    }
+    
+    private func setupModelOptions() {
+        let models = OpenAI.shared.models ?? []
+        modelsPopUpBtn.removeAllItems()
+        models.forEach { model in
+            modelsPopUpBtn.addItem(withTitle: model.id)
+        }
     }
 }
