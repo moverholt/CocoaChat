@@ -54,7 +54,9 @@ class OpenAI {
             if let resp = try? JSONDecoder().decode(
                 ModelsResponse.self, from: data
             ) {
-                let models = resp.data.sorted(by: { $0.id < $1.id }).filter({
+                let models = resp.data.sorted(
+                    by: { $0.id < $1.id }
+                ).filter({
                     useableModekIds.contains($0.id)
                 })
                 self.models = models
@@ -99,6 +101,60 @@ class OpenAI {
         }
     }
     
+    func chatCompletion(
+        messages: [Message],
+        model: Model.ID
+    ) async -> Result<ChatCompletionResponse, Error> {
+        var request = apiRequest("/v1/chat/completions", method: "POST")
+        let azReq = ChatCompletionRequest(model: model, messages: messages)
+        let body = try! JSONEncoder().encode(azReq)
+        request.httpBody = body
+        let resp = await makeApiRequest(request)
+        switch resp {
+        case .success(let data):
+            if let dataString = String(data: data, encoding: .utf8) {
+                print("Data string:", dataString)
+            }
+            if let resp = try? JSONDecoder().decode(
+                ChatCompletionResponse.self,
+                from: data
+            ) {
+                return .success(resp)
+            }
+            return .failure(
+                ClientError.runtimeError("Failed to decode response")
+            )
+        case .failure(let err):
+            return .failure(err)
+        }
+    }
 }
 
 
+
+extension OpenAI {
+    struct ChatCompletionResponse: Decodable {
+        let choices: [Choice]
+    }
+    
+    struct Choice: Decodable {
+        let index: Int
+        let message: ChoiceMessage
+    }
+    
+    struct ChoiceMessage: Decodable {
+        let role: String
+        let content: String
+    }
+    
+    struct Message: Encodable {
+        let role: String
+        let content: String
+    }
+    
+    struct ChatCompletionRequest: Encodable {
+        var model: OpenAI.Model.ID
+        var messages: [Message]
+        var temperature = 1.0
+    }
+}

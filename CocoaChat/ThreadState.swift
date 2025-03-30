@@ -11,6 +11,7 @@ struct ThreadState {
     let messages: [Message]
     let streamingMsg: Message?
     let modelId: String
+    let title: String
     
     enum Role {
         case user, assistant
@@ -32,5 +33,6 @@ struct ThreadState {
             streamingMsg = nil
         }
         modelId = chatController.modelId
+        title = chatController.chatWindowController.window?.title ?? "Chat Window"
     }
 }

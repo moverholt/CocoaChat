@@ -9,7 +9,6 @@ import Cocoa
 
 class ChatViewController:
     NSViewController,
-    NSWindowDelegate,
     NewChatMsgTextViewDelegate,
     NSTextViewDelegate,
     OpenAIStreamingDelegate {
@@ -31,8 +30,15 @@ class ChatViewController:
     @IBOutlet weak var modelsPopUpBtn: NSPopUpButton!
     @IBAction func onSelectModelsPopUp(_ sender: Any) {
         let modelId = modelsPopUpBtn.title
-        print("Selected model: \(modelId)")
         UserSettings.shared.setDefaultModelId(modelId)
+    }
+    @IBOutlet weak var statusView: NSView!
+    @IBOutlet weak var statusButton: NSButton!
+    @IBOutlet weak var statusLabel: NSTextField!
+    @IBAction func onClickStatusBtn(_ sender: Any) {
+        Task {
+            await connectAndSetup()
+        }
     }
     
     init(thread: ThreadState?, streaming: OpenAIStreaming) {
@@ -51,25 +57,47 @@ class ChatViewController:
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.window?.delegate = self
-        self.newMsgTextView.msgDelegate = self
-        self.newMsgTextView.delegate = self
-        self.newMsgTextView.string = ""
-        self.sendBtn.isEnabled = false
-        self.streaming.delegate = self
+        newMsgTextView.string = ""
+        newMsgTextView.msgDelegate = self
+        newMsgTextView.delegate = self
+        
+        streaming.delegate = self
+        
         spacer.translatesAutoresizingMaskIntoConstraints = false
+        
         setupConstraints()
-        setupModelOptions()
-        if let thread = initalThreadState {
-            setupControllerWithThreadState(thread)
-        } else {
-            let userModel = UserSettings.shared.model.defaultModelId
-            modelsPopUpBtn.selectItem(withTitle: userModel)
+        
+        Task {
+            await connectAndSetup()
+        }
+    }
+    
+    private func connectAndSetup() async {
+        statusLabel.stringValue = "Connecting to OpenAI..."
+        statusLabel.textColor = .systemBlue
+        statusButton.isHidden = true
+        modelsPopUpBtn.isHidden = true
+        newMsgTextView.isEditable = false
+        sendBtn.isEnabled = false
+
+        let resp = await OpenAI.shared.models()
+        switch resp {
+        case let .success(models):
+            setupModelOptions(models)
+            statusLabel.stringValue = "Connected"
+            modelsPopUpBtn.isHidden = false
+            newMsgTextView.isEditable = true
+            setupControllerWithThreadState(initalThreadState)
+        case let .failure(err):
+            statusLabel.stringValue = err.localizedDescription
+            statusLabel.textColor = .red
+            statusButton.isHidden = false
         }
     }
     
     override func viewDidAppear() {
         print("View did appear")
+        chatWindowController.window?.title = initalThreadState?.title ?? "New Chat Window"
     }
     
     override func viewDidLayout() {
@@ -85,7 +113,19 @@ class ChatViewController:
         stackMsgViews.filter({ $0.role == .assistant }).last
     }
     
-    func updateSpacerHeight() {
+    var stackMsgViews: [MessageView] {
+        stackView.arrangedSubviews.compactMap { v in v as? MessageView }
+    }
+    
+    var modelId: String { modelsPopUpBtn.title }
+    
+    var threadState: ThreadState { ThreadState(self) }
+    
+    var chatWindowController: ChatWindowController {
+        view.window!.windowController as! ChatWindowController
+    }
+    
+    private func updateSpacerHeight() {
         let ch = scrollView.contentView.bounds.height
         let lum = lastUserMsgView
         let lam = lastAssistantView
@@ -99,7 +139,7 @@ class ChatViewController:
         spacerHeight.constant = const
     }
     
-    func scrollToLastUserMsg() {
+    private func scrollToLastUserMsg() {
         guard let lum = stackMsgViews.last else { return }
         let coords = lum.convert(lum.bounds, to: stackView)
         let offset = stackView.bounds.maxY - coords.maxY
@@ -116,6 +156,7 @@ class ChatViewController:
             streamingMsgView = addAssistantMsgViewToStackView(sm.text)
         }
         modelsPopUpBtn.selectItem(withTitle: thread.modelId)
+        updateStatusView()
     }
     
     private func setupConstraints() {
@@ -124,36 +165,40 @@ class ChatViewController:
         stackView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             docView.topAnchor.constraint(equalTo: clipView.topAnchor),
-            docView.leadingAnchor.constraint(equalTo: clipView.leadingAnchor),
-            docView.trailingAnchor.constraint(equalTo: clipView.trailingAnchor),
+            docView.leadingAnchor.constraint(
+                equalTo: clipView.leadingAnchor
+            ),
+            docView.trailingAnchor.constraint(
+                equalTo: clipView.trailingAnchor
+            ),
         ])
-    }
-    
-    func windowDidResize(_ notification: Notification) {
     }
     
     func onSubmitNewMsg(_ textField: NewChatMsgTextView) {
         handleSubmit()
     }
     
-    func handleSubmit() {
+    private func handleSubmit() {
         let text = newMsgTextView.string.trimmingCharacters(
             in: .whitespacesAndNewlines
         )
-        if text.isEmpty {
-            return
-        }
+        if text.isEmpty { return }
         newMsgTextView.string = ""
         sendBtn.title = "Stop"
         spinner.startAnimation(nil)
         addUserMsgViewToStackView(text)
-        print("Selected model: \(modelId)")
-        streaming.streamThread(threadState, model: modelId)
+        let ts = threadState
+        if ts.messages.count == 1 {
+            Task {
+                let title = await generateWindowTitle(ts)
+                chatWindowController.window?.title = title
+            }
+        }
+        streaming.streamThread(ts, model: modelId)
         scrollToLastUserMsg()
         updateSpacerHeight()
+        updateStatusView()
     }
-    
-    var modelId: String { modelsPopUpBtn.title }
     
     func textDidChange(_ notification: Notification) {
         guard let textView = notification.object as? NSTextView else {
@@ -186,11 +231,7 @@ class ChatViewController:
             updateSpacerHeight()
         }
     }
-    
-    var stackMsgViews: [MessageView] {
-        stackView.arrangedSubviews.compactMap { v in v as? MessageView }
-    }
-    
+
     func streamUpdate(_ body: String) {
         Task { @MainActor in
             if let smv = streamingMsgView {
@@ -229,15 +270,18 @@ class ChatViewController:
         return mv
     }
     
-    var threadState: ThreadState {
-        return ThreadState(self)
-    }
-    
-    private func setupModelOptions() {
-        let models = OpenAI.shared.models ?? []
+    private func setupModelOptions(_ models: [OpenAI.Model]) {
         modelsPopUpBtn.removeAllItems()
         models.forEach { model in
             modelsPopUpBtn.addItem(withTitle: model.id)
+        }
+    }
+    
+    private func updateStatusView() {
+        if stackMsgViews.isEmpty {
+            statusView.isHidden = false
+        } else {
+            statusView.isHidden = true
         }
     }
 }
