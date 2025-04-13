@@ -112,9 +112,9 @@ class OpenAI {
         let resp = await makeApiRequest(request)
         switch resp {
         case .success(let data):
-            if let dataString = String(data: data, encoding: .utf8) {
-                print("Data string:", dataString)
-            }
+//            if let dataString = String(data: data, encoding: .utf8) {
+//                print("Data string:", dataString)
+//            }
             if let resp = try? JSONDecoder().decode(
                 ChatCompletionResponse.self,
                 from: data

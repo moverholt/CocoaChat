@@ -8,6 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ChatViewController" customModule="CocoaChat" customModuleProvider="target">
             <connections>
                 <outlet property="docView" destination="gyO-lF-vzt" id="OtG-hx-UHh"/>
+                <outlet property="editMsgStatusView" destination="TmS-ZP-koa" id="b60-gK-qF4"/>
                 <outlet property="modelsPopUpBtn" destination="7Za-FA-Uge" id="u6A-FE-bhp"/>
                 <outlet property="newMsgTextView" destination="qwd-iC-xm8" id="6Es-x2-ijP"/>
                 <outlet property="scrollView" destination="e0D-An-cqI" id="bFd-Oq-kop"/>
@@ -25,21 +26,21 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="465" height="272"/>
+            <rect key="frame" x="0.0" y="0.0" width="473" height="204"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" verticalScrollElasticity="allowed" translatesAutoresizingMaskIntoConstraints="NO" id="e0D-An-cqI">
-                    <rect key="frame" x="0.0" y="86" width="465" height="186"/>
+                    <rect key="frame" x="0.0" y="86" width="473" height="118"/>
                     <clipView key="contentView" drawsBackground="NO" id="cHK-d2-9q4" customClass="FlippedClipView" customModule="CocoaChat" customModuleProvider="target">
-                        <rect key="frame" x="0.0" y="0.0" width="465" height="186"/>
+                        <rect key="frame" x="0.0" y="0.0" width="473" height="118"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view id="gyO-lF-vzt">
-                                <rect key="frame" x="0.0" y="0.0" width="450" height="171"/>
+                                <rect key="frame" x="0.0" y="0.0" width="458" height="103"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="w0u-mn-0GC">
-                                        <rect key="frame" x="198" y="36" width="54" height="99"/>
+                                        <rect key="frame" x="202" y="2" width="54" height="99"/>
                                         <subviews>
                                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="dVJ-5v-mf7">
                                                 <rect key="frame" x="6" y="47.5" width="42.5" height="50"/>
@@ -80,10 +81,10 @@
                                         </constraints>
                                     </customView>
                                     <stackView distribution="fill" orientation="vertical" alignment="leading" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Uss-jv-HV8">
-                                        <rect key="frame" x="12" y="0.0" width="426" height="171"/>
+                                        <rect key="frame" x="12" y="0.0" width="434" height="103"/>
                                     </stackView>
                                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="zki-pE-l6g" userLabel="Spacer">
-                                        <rect key="frame" x="0.0" y="0.0" width="450" height="0.0"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="458" height="0.0"/>
                                         <constraints>
                                             <constraint firstAttribute="height" id="44w-75-psS"/>
                                         </constraints>
@@ -108,23 +109,23 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="xIs-tN-kzE">
-                        <rect key="frame" x="424" y="1" width="16" height="154"/>
+                        <rect key="frame" x="457" y="0.0" width="16" height="118"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
                 <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nxl-F2-Sl4">
-                    <rect key="frame" x="12" y="38" width="441" height="48"/>
+                    <rect key="frame" x="12" y="38" width="449" height="48"/>
                     <clipView key="contentView" drawsBackground="NO" id="GCO-KH-dQL">
-                        <rect key="frame" x="0.0" y="0.0" width="441" height="48"/>
+                        <rect key="frame" x="0.0" y="0.0" width="449" height="48"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <textView wantsLayer="YES" importsGraphics="NO" richText="NO" verticallyResizable="YES" allowsUndo="YES" spellingCorrection="YES" smartInsertDelete="YES" id="qwd-iC-xm8" customClass="NewChatMsgTextView" customModule="CocoaChat" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="441" height="48"/>
+                                <rect key="frame" x="0.0" y="0.0" width="449" height="48"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                <size key="minSize" width="441" height="48"/>
-                                <size key="maxSize" width="441" height="10000000"/>
+                                <size key="minSize" width="449" height="48"/>
+                                <size key="maxSize" width="449" height="10000000"/>
                             </textView>
                         </subviews>
                     </clipView>
@@ -136,12 +137,12 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                     <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="EgN-hc-va0">
-                        <rect key="frame" x="425" y="0.0" width="16" height="48"/>
+                        <rect key="frame" x="433" y="0.0" width="16" height="48"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
                 </scrollView>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="UPN-jE-4Ki">
-                    <rect key="frame" x="395" y="5" width="65" height="32"/>
+                    <rect key="frame" x="403" y="5" width="65" height="32"/>
                     <buttonCell key="cell" type="push" title="Send" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="R3D-Gi-tWI">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
@@ -151,7 +152,7 @@
                     </connections>
                 </button>
                 <progressIndicator maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="Ro9-wq-aMP">
-                    <rect key="frame" x="378" y="14" width="16" height="16"/>
+                    <rect key="frame" x="386" y="14" width="16" height="16"/>
                 </progressIndicator>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Za-FA-Uge">
                     <rect key="frame" x="9" y="8" width="39" height="25"/>
@@ -164,15 +165,54 @@
                         <action selector="onSelectModelsPopUp:" target="-2" id="Kya-ke-aNS"/>
                     </connections>
                 </popUpButton>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="TmS-ZP-koa" userLabel="Edit Msg Status">
+                    <rect key="frame" x="24" y="98" width="180" height="28"/>
+                    <subviews>
+                        <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kwS-ld-pSs">
+                            <rect key="frame" x="4" y="6" width="104" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="clipping" title="Editing Message" id="Eje-KQ-PCG">
+                                <font key="font" usesAppearanceFont="YES"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xqe-OW-FY2">
+                            <rect key="frame" x="105" y="-3" width="76" height="32"/>
+                            <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="98M-B1-1on">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                                <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                            </buttonCell>
+                            <connections>
+                                <action selector="onClickCancelEdit:" target="-2" id="F1E-SB-lvZ"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="xqe-OW-FY2" secondAttribute="trailing" constant="6" id="0Nw-Nm-Q6b"/>
+                        <constraint firstItem="xqe-OW-FY2" firstAttribute="centerY" secondItem="TmS-ZP-koa" secondAttribute="centerY" id="KIF-zZ-xQ5"/>
+                        <constraint firstItem="kwS-ld-pSs" firstAttribute="leading" secondItem="TmS-ZP-koa" secondAttribute="leading" constant="6" id="KaP-jC-6oI"/>
+                        <constraint firstAttribute="bottom" secondItem="kwS-ld-pSs" secondAttribute="bottom" constant="6" id="TPf-8a-0CH"/>
+                        <constraint firstItem="xqe-OW-FY2" firstAttribute="leading" secondItem="kwS-ld-pSs" secondAttribute="trailing" constant="6" id="ZSk-au-yZ5"/>
+                        <constraint firstItem="kwS-ld-pSs" firstAttribute="top" secondItem="TmS-ZP-koa" secondAttribute="top" constant="6" id="w5P-DS-Ofo"/>
+                        <constraint firstItem="kwS-ld-pSs" firstAttribute="centerY" secondItem="TmS-ZP-koa" secondAttribute="centerY" id="zKV-5b-gEj"/>
+                    </constraints>
+                </customView>
             </subviews>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="nxl-F2-Sl4" secondAttribute="trailing" constant="12" id="4Eb-d3-czI"/>
                 <constraint firstAttribute="trailing" secondItem="UPN-jE-4Ki" secondAttribute="trailing" constant="12" id="4ko-6x-UpZ"/>
                 <constraint firstItem="e0D-An-cqI" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="83f-UU-1ZG"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="TmS-ZP-koa" secondAttribute="trailing" constant="24" id="BUK-PV-Vgp"/>
+                <constraint firstItem="TmS-ZP-koa" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="24" id="DDv-mO-M5T"/>
                 <constraint firstAttribute="bottom" secondItem="UPN-jE-4Ki" secondAttribute="bottom" constant="12" id="FKf-sV-oXy"/>
+                <constraint firstItem="nxl-F2-Sl4" firstAttribute="top" secondItem="TmS-ZP-koa" secondAttribute="bottom" constant="12" id="HFO-No-iuF"/>
                 <constraint firstItem="UPN-jE-4Ki" firstAttribute="leading" secondItem="Ro9-wq-aMP" secondAttribute="trailing" constant="8" symbolic="YES" id="JRJ-Vx-yDe"/>
                 <constraint firstItem="e0D-An-cqI" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="LWx-95-d6k"/>
                 <constraint firstItem="UPN-jE-4Ki" firstAttribute="top" secondItem="nxl-F2-Sl4" secondAttribute="bottom" constant="6" id="aUv-NO-KYg"/>
+                <constraint firstItem="TmS-ZP-koa" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Hz6-mo-xeY" secondAttribute="top" constant="24" id="arD-gG-aRA"/>
                 <constraint firstItem="nxl-F2-Sl4" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" constant="12" id="bW8-vL-BDC"/>
                 <constraint firstItem="nxl-F2-Sl4" firstAttribute="top" secondItem="e0D-An-cqI" secondAttribute="bottom" id="ciI-yb-1qL"/>
                 <constraint firstItem="Ro9-wq-aMP" firstAttribute="centerY" secondItem="UPN-jE-4Ki" secondAttribute="centerY" id="iLw-Vl-9kt"/>

@@ -11,10 +11,14 @@ class ChatViewController:
     NSViewController,
     NewChatMsgTextViewDelegate,
     NSTextViewDelegate,
-    OpenAIStreamingDelegate {
+    OpenAIStreamingDelegate,
+    MessageViewDelegate {
     private let streaming: OpenAIStreaming!
     private let initalThreadState: ThreadState?
+    private(set) var msgViewFontSize: FontSize = .normal
     private(set) var streamingMsgView: MessageView?
+    
+    private var editMsgId: MsgId?
 
     @IBOutlet weak var newMsgTextView: NewChatMsgTextView!
     @IBOutlet weak var scrollView: NSScrollView!
@@ -39,6 +43,26 @@ class ChatViewController:
         Task {
             await connectAndSetup()
         }
+    }
+    
+    @IBAction func makeTextLarger(_ sender: Any?) {
+        print("Making the font bigger!")
+        msgViewFontSize = msgViewFontSize.larger
+        updateMsgViewFontSizes()
+    }
+    @IBAction func makeTextStandardSize(_ sender: Any?) {
+        print("Making the font standard size!")
+        msgViewFontSize = .normal
+        updateMsgViewFontSizes()
+    }
+    @IBAction func makeTextSmaller(_ sender: Any?) {
+        print("Making the font smaller!")
+        msgViewFontSize = msgViewFontSize.smaller
+        updateMsgViewFontSizes()
+    }
+    @IBOutlet weak var editMsgStatusView: NSView!
+    @IBAction func onClickCancelEdit(_ sender: Any) {
+        handleCancelEditMsg()
     }
     
     init(thread: ThreadState?, streaming: OpenAIStreaming) {
@@ -66,10 +90,6 @@ class ChatViewController:
         spacer.translatesAutoresizingMaskIntoConstraints = false
         
         setupConstraints()
-        
-        Task {
-            await connectAndSetup()
-        }
     }
     
     private func connectAndSetup() async {
@@ -79,25 +99,41 @@ class ChatViewController:
         modelsPopUpBtn.isHidden = true
         newMsgTextView.isEditable = false
         sendBtn.isEnabled = false
+        editMsgStatusView.isHidden = true
 
         let resp = await OpenAI.shared.models()
         switch resp {
         case let .success(models):
             setupModelOptions(models)
-            statusLabel.stringValue = "Connected"
+            let defaultModelId = UserSettings.shared.model.defaultModelId
+            modelsPopUpBtn.selectItem(withTitle: defaultModelId)
             modelsPopUpBtn.isHidden = false
+            statusLabel.stringValue = "Connected"
             newMsgTextView.isEditable = true
+                
+            if (initalThreadState?.messages ?? []).isEmpty {
+                statusView.isHidden = false
+            } else {
+                statusView.isHidden = true
+            }
+            
             setupControllerWithThreadState(initalThreadState)
+            scrollToLastUserMsg()
+            view.window?.makeFirstResponder(newMsgTextView)
         case let .failure(err):
             statusLabel.stringValue = err.localizedDescription
             statusLabel.textColor = .red
             statusButton.isHidden = false
+            statusView.isHidden = false
         }
     }
     
     override func viewDidAppear() {
-        print("View did appear")
         chatWindowController.window?.title = initalThreadState?.title ?? "New Chat Window"
+        
+        Task {
+            await connectAndSetup()
+        }
     }
     
     override func viewDidLayout() {
@@ -149,14 +185,24 @@ class ChatViewController:
     private func setupControllerWithThreadState(_ thread: ThreadState?) {
         guard let thread = thread else { return }
         thread.messages.forEach { msg in
-            let tv = MessageView(text: msg.text, role: msg.sender)
+            let tv = MessageView(
+                msg.id,
+                text: msg.text,
+                role: msg.sender,
+                fontSize: msgViewFontSize
+            )
+            tv.delegate = self
             stackView.addArrangedSubview(tv)
+            tv.needsDisplay = true
         }
+        stackView.needsLayout = true
+        stackView.layoutSubtreeIfNeeded()
+        
         if let sm = thread.streamingMsg {
             streamingMsgView = addAssistantMsgViewToStackView(sm.text)
         }
+
         modelsPopUpBtn.selectItem(withTitle: thread.modelId)
-        updateStatusView()
     }
     
     private func setupConstraints() {
@@ -186,6 +232,17 @@ class ChatViewController:
         newMsgTextView.string = ""
         sendBtn.title = "Stop"
         spinner.startAnimation(nil)
+        if let id = editMsgId {
+            stackMsgViews.forEach { mv in
+                if mv.isHidden || mv.id == id {
+                    stackView.removeArrangedSubview(mv)
+                    mv.removeFromSuperview()
+                }
+            }
+            editMsgId = nil
+            editMsgStatusView.isHidden = true
+        }
+        
         addUserMsgViewToStackView(text)
         let ts = threadState
         if ts.messages.count == 1 {
@@ -197,7 +254,7 @@ class ChatViewController:
         streaming.streamThread(ts, model: modelId)
         scrollToLastUserMsg()
         updateSpacerHeight()
-        updateStatusView()
+        statusView.isHidden = true
     }
     
     func textDidChange(_ notification: Notification) {
@@ -260,12 +317,24 @@ class ChatViewController:
     }
     
     private func addUserMsgViewToStackView(_ text: String) {
-        let mv = MessageView(text: text, role: .user)
+        let mv = MessageView(
+            UUID(),
+            text: text,
+            role: .user,
+            fontSize: msgViewFontSize
+        )
+        mv.delegate = self
         stackView.addArrangedSubview(mv)
     }
     
     private func addAssistantMsgViewToStackView(_ text: String) -> MessageView {
-        let mv = MessageView(text: text, role: .assistant)
+        let mv = MessageView(
+            UUID(),
+            text: text,
+            role: .assistant,
+            fontSize: msgViewFontSize
+        )
+        mv.delegate = self
         stackView.addArrangedSubview(mv)
         return mv
     }
@@ -277,11 +346,43 @@ class ChatViewController:
         }
     }
     
-    private func updateStatusView() {
-        if stackMsgViews.isEmpty {
-            statusView.isHidden = false
-        } else {
-            statusView.isHidden = true
+    private func updateMsgViewFontSizes() {
+        print("Updating message views font size")
+        stackMsgViews.forEach { mv in
+            mv.setFontSize(msgViewFontSize)
         }
+        stackView.layoutSubtreeIfNeeded()
+    }
+    
+    func onEditBtnClick(_ msgId: MsgId) {
+        print("Edit button clicked for message with ID: \(msgId)")
+        handleEditMsg(msgId)
+    }
+    
+    private func handleEditMsg(_ msgId: MsgId) {
+        var editMessageView: MessageView?
+        stackMsgViews.forEach { mv in
+            if editMessageView != nil {
+                mv.isHidden = true
+            }
+            if mv.id == msgId {
+                editMessageView = mv
+            }
+        }
+        guard let mv = editMessageView else { return }
+        
+        editMsgId = msgId
+        editMsgStatusView.isHidden = false
+        
+        newMsgTextView.string = mv.text
+    }
+    
+    private func handleCancelEditMsg() {
+        editMsgId = nil
+        editMsgStatusView.isHidden = true
+        stackMsgViews.forEach { mv in
+            mv.isHidden = false
+        }
+        newMsgTextView.string = ""
     }
 }

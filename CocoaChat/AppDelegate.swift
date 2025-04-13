@@ -7,33 +7,24 @@
 
 import Cocoa
 import Carbon
-        
+import Carbon.HIToolbox
 
 @main
 class AppDelegate: NSObject, NSApplicationDelegate {
     private var preferencesWindowController: PreferencesWindowController?
     private var statusItem: NSStatusItem?
-    private let menu = NSMenu()
+    private let statusMenu = NSMenu()
+    private var hotKeyRef: EventHotKeyRef?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        Task {
-            let resp = await OpenAI.shared.models()
-            switch resp {
-            case .success(let models):
-                print("Models:", models)
-            case .failure(let err):
-                print("Failed to get models: \(err)")
-            }
-            Task { @MainActor in
-                ChatWindowManager.shared.openNewEmptyFullChatWindow()
-                createStatusItem()
-                setupMenu()
-            }
-        }
+        registerGlobalHotkey()
+        ChatWindowManager.shared.openNewEmptyFullChatWindow()
+        createStatusItem()
+        setupMenu()
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
+        unregisterGlobalHotkey()
     }
 
     func applicationSupportsSecureRestorableState(_ app: NSApplication) -> Bool {
@@ -79,7 +70,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func setupMenu() {
-        menu.addItem(
+        statusMenu.addItem(
             NSMenuItem(
                 title: "Quit",
                 action: #selector(quitApp(_:)),
@@ -90,7 +81,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     private func showMenu() {
         if let button = statusItem?.button {
-            statusItem?.menu = menu
+            statusItem?.menu = statusMenu
             button.performClick(nil)
             statusItem?.menu = nil
         }
@@ -98,6 +89,65 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc private func quitApp(_ sender: Any?) {
         NSApplication.shared.terminate(nil)
+    }
+    
+    private func registerGlobalHotkey() {
+        let eventHotKeyID = EventHotKeyID(
+            signature: OSType(UInt32(truncatingIfNeeded: "htk1".fourCharCodeValue)),
+            id: UInt32(1)
+        )
+        
+        let modifierKeys: UInt32 = UInt32((cmdKey | shiftKey))
+        let keyCode = UInt32(kVK_ANSI_X)
+        
+        RegisterEventHotKey(
+            keyCode,
+            modifierKeys,
+            eventHotKeyID,
+            GetApplicationEventTarget(),
+            0,
+            &hotKeyRef
+        )
+        
+        var eventType = EventTypeSpec(
+            eventClass: OSType(kEventClassKeyboard),
+            eventKind: UInt32(kEventHotKeyPressed)
+        )
+        
+        InstallEventHandler(
+            GetApplicationEventTarget(),
+            { _, eventRef, _ in
+                var hotKeyID = EventHotKeyID()
+                GetEventParameter(
+                    eventRef,
+                    EventParamName(kEventParamDirectObject),
+                    EventParamType(typeEventHotKeyID),
+                    nil,
+                    MemoryLayout.size(ofValue: hotKeyID),
+                    nil,
+                    &hotKeyID
+                )
+                
+                if hotKeyID.signature == OSType(
+                    UInt32(truncatingIfNeeded: "htk1".fourCharCodeValue)
+                ) {
+                    print("✅ Global hotkey Command+Shift+X pressed")
+                    ChatWindowManager.shared.openEmptyFloatingChatWindow()
+                }
+                
+                return noErr
+            },
+            1,
+            &eventType,
+            nil,
+            nil
+        )
+    }
+    
+    private func unregisterGlobalHotkey() {
+        if let hotKeyRef = hotKeyRef {
+            UnregisterEventHotKey(hotKeyRef)
+        }
     }
 }
 

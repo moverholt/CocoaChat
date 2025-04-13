@@ -1,5 +1,5 @@
 //
-//  Thread.swift
+//  ThreadState.swift
 //  CocoaChat
 //
 //  Created by Matt Overholt on 3/2/25.
@@ -33,6 +33,6 @@ struct ThreadState {
             streamingMsg = nil
         }
         modelId = chatController.modelId
-        title = chatController.chatWindowController.window?.title ?? "Chat Window"
+        title = chatController.chatWindowController.window?.title ?? "New Chat Window"
     }
 }
